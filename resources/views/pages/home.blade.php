@@ -74,7 +74,8 @@
                         </button>
                     </td>
                     <td>
-                      <button class="btn btn-primary" onclick="updateOrder({{$pedido->pedido_id}},'{{$pedido->pedido_cliente}}',{{$pedido->mesa_id}},{{$pedido->pedido_obj}})">
+                      <button class="btn btn-primary" onclick="updateOrder({{$pedido->pedido_id}},'{{$pedido->pedido_cliente}}',{{$pedido->pedido_mesa}},{{$pedido->pedido_obj}})">
+                      
                         <i class="fa fa-pen"></i>
                       </button>
                     </td>
