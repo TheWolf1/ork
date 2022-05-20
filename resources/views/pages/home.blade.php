@@ -178,7 +178,7 @@
   
             <form action="{{route('actualizar.pedido')}}" method="POST">
               @csrf
-                <input type="text" id="idUpdate" name="txtIdUpdate">
+                <input type="text" id="idUpdate" name="txtIdUpdate" hidden>
                 <div class="form-group">
                     <label for="idNameCliente">Nombre:</label>
                     <input type="text" name="nombreClienteUp" id="idNameClienteUp" class="form-control" placeholder="Ejemplo: Juan Cevallos">
@@ -192,7 +192,7 @@
                         
                     </select>
                 </div>
-                <textarea name="txtProductJsonUp" id="txtProductJsonUp" cols="30" rows="10" ></textarea>
+                <textarea name="txtProductJsonUp" id="txtProductJsonUp" cols="30" rows="10" hidden></textarea>
                 <input type="text" name="precioTotalUp" id="precioTotalIdUp" hidden>
                 <div class="form-group">
                     <label for="idProductos">Productos del pedido:</label>
@@ -204,7 +204,7 @@
                 </div>
             <hr>
             <h3>Total: <b id="totalPrecioUp"></b></h3>
-                <button type="submit" class="btn btn-primary">Crear pedido</button>
+                <button type="submit" class="btn btn-success">Actualizar pedido</button>
               </form>
             <hr>
             <h4>BUSCAR PRODUCTOS</h4>
@@ -232,7 +232,12 @@
             <hr>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <form action="{{route('eliminar.pedido')}}" method="POST" id="formDelPedido">
+             @csrf
+             <input type="text" name="DelPedidoName" id="idDelPedidoName" hidden>
+             <button type="submit" class="btn btn-danger"  id="btnEliminarPedido"   data-dismiss="modal">Eliminar Orden</button>
+          </form>
+         
           
         </div>
       </div>

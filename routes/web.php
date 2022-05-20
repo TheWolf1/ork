@@ -39,6 +39,7 @@ Route::post('product/actualizar',[ProductController::class, 'updateProduct'])->n
 Route::post('pedido/crear',[PedidoController::class,'create'])->name('crear.pedido');
 Route::post('pedido/pagar',[PedidoController::class,'pagar'])->name('pagar.pedido');
 Route::post('pedido/actualizar',[PedidoController::class,'update'])->name('actualizar.pedido');
+Route::post('pedido/eliminar',[PedidoController::class,'destroy'])->name('eliminar.pedido');
 
 Route::get('mesas',MesaController::class)->name('mesas');
 Route::post('mesas/crear',[MesaController::class,'create'])->name('mesas.crear');

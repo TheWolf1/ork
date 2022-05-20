@@ -126,8 +126,15 @@ class PedidoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         //
+
+        Pedido::where('pedido_id',$request["DelPedidoName"])->delete();
+
+        $pedidos = Pedido::where('pedido_estado','!=','Pagado')->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.Mesa')->get();
+        $mesas= Mesa::all();
+        $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
+        return view('pages.home',compact('products','pedidos','mesas'));
     }
 }

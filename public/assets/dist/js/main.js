@@ -23,9 +23,14 @@ function btnPagar(id, precio) {
 }
 
 
+
+
 //funcion  actualizar orden 
 function updateOrder(id, nombreCliente, mesa, pedidoObj,precio) {
 
+
+
+    $("#idDelPedidoName").val(id);
     $("#listOfProductsUp").html('');
     $("#idUpdate").val(id);
     $("#idNameClienteUp").val(nombreCliente);
@@ -41,14 +46,14 @@ function updateOrder(id, nombreCliente, mesa, pedidoObj,precio) {
     pedidoObj.forEach(product => {
         totalProd += (product.price * product.cant);
         var addinList = $(`<li>
-                                     <p>`+ product.cant + ` ` + product.nombre + ` "` + product.description + `" $` + product.price + ` <button type="button" class="btn btn-danger" id="btnEliminar" onclick="delProd(` + product.id + `)">Del</button></p>
+                                     <p>`+ product.cant + ` ` + product.nombre + ` "` + product.description + `" $` + product.price + ` <button type="button" class="btn btn-danger"  onclick="delProdUp(` + product.id + `)">Del</button></p>
                                  </li>`);
         $("#listOfProductsUp").append(addinList);
 
     });
 
 
-    update = true;
+  
 
     $("#updateOrder").modal("show");
 }
@@ -167,7 +172,7 @@ function addToListUp() {
     listOfProduct.forEach(product => {
         totalProd += (product.price * product.cant);
         var addinList = $(`<li>
-                              <p>`+ product.cant + ` ` + product.nombre + ` "` + product.description + `" $` + product.price + ` <button type="button" class="btn btn-danger" id="btnEliminar" onclick="delProd(` + product.id + `)">Del</button></p>
+                              <p>`+ product.cant + ` ` + product.nombre + ` "` + product.description + `" $` + product.price + ` <button type="button" class="btn btn-danger" onclick="delProdUp(` + product.id + `)">Del</button></p>
                           </li>`);
 
         $("#listOfProductsUp").append(addinList);
@@ -188,8 +193,12 @@ function addToListUp() {
 }
 
 
-
-
+//Eliminar pedido 
+$("#btnEliminarPedido").click((e)=>{
+    e.preventDefault();
+    $("#formDelPedido").submit();
+    
+});
 
 
 
@@ -216,13 +225,40 @@ function delProd(id) {
                           </li>`);
         $("#listOfProducts").append(addinList);
     });
-
-
+    $("#precioTotalIdUp").val(totalProd);
     var datosPedidoJson = JSON.stringify(eliminarProd);
     $("#txtProductJson").val(datosPedidoJson);
     console.log(eliminarProd);
 }
 
+function delProdUp(id) {
+    //alert("el id es: "+id);
+
+    if (listOfProduct.length > 0) {
+        $("#listOfProductsUp").html('');
+
+    }
+
+    let eliminarProd = listOfProduct.filter((item) => item.id != id);
+
+    listOfProduct = eliminarProd;
+
+
+    var totalProd = 0;
+
+    listOfProduct.forEach(product => {
+        totalProd += (product.price * product.cant);
+        var addinList = $(`<li>
+                              <p>`+ product.cant + ` ` + product.nombre + ` "` + product.description + `" $` + product.price + ` <button type="button" class="btn btn-danger" id="btnEliminar" onclick="delProd(` + product.id + `)">Del</button></p>
+                          </li>`);
+        $("#listOfProductsUp").append(addinList);
+    });
+
+    $("#precioTotalIdUp").val(totalProd);
+    var datosPedidoJson = JSON.stringify(eliminarProd);
+    $("#txtProductJsonUp").val(datosPedidoJson);
+    console.log(eliminarProd);
+}
 
 // datos de las tablas
 $('#tbPedidos').DataTable({
