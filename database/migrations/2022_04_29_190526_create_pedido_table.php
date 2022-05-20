@@ -15,7 +15,7 @@ class CreatePedidoTable extends Migration
     {
         Schema::create('pedido', function (Blueprint $table) {
             $table->id('pedido_id');
-            $table->string('pedido_obj');
+            $table->longText('pedido_obj');
             $table->string('pedido_cliente');
             $table->unsignedBigInteger('pedido_mesero');
             $table->unsignedBigInteger('pedido_mesa');

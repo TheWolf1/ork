@@ -24,10 +24,12 @@ function btnPagar(id, precio) {
 
 
 //funcion  actualizar orden 
-function updateOrder(id, nombreCliente, mesa, pedidoObj) {
+function updateOrder(id, nombreCliente, mesa, pedidoObj,precio) {
 
     $("#listOfProductsUp").html('');
+    $("#idUpdate").val(id);
     $("#idNameClienteUp").val(nombreCliente);
+    $("#precioTotalIdUp").val(precio)
     $("#idMesaClienteUp option").attr("selected", false);
     $("#idMesaClienteUp option[value=" + mesa + "]").attr("selected", true);
     listOfProduct = pedidoObj;
@@ -69,14 +71,14 @@ function agregarProducto(id, nombre, precio) {
 }
 
 function agregarProductoUpdate(id, nombre, precio) {
-    $("#idCantProd").val(1);
-    $("#idProds").text(id);
-    $("#nameProd").text(nombre);
-    $("#priceProd").text(precio);
+    $("#idCantProdUp").val(1);
+    $("#idProdsUp").text(id);
+    $("#nameProdUp").text(nombre);
+    $("#priceProdUp").text(precio);
 
 
 
-    $("#cantidadProd").modal("show");
+    $("#cantidadProdUp").modal("show");
 
 }
 
@@ -134,6 +136,62 @@ function addToList() {
     
 
 }
+
+
+function addToListUp() {
+
+    $("#txtProductJsonUp").val(datosPedidoJson);
+    $("#listOfProductsUp").html('');
+  
+
+    let id = $("#idProdsUp").text();
+    let nombre = $("#nameProdUp").text();
+    let price = $("#priceProdUp").text();
+    let cant = $("#idCantProdUp").val();
+    let description = $("#idDescriptionProdUp").val();
+
+    productList = {
+        id: id,
+        nombre: nombre,
+        price: parseFloat(price),
+        cant: parseFloat(cant),
+        description: description
+    };
+
+
+
+    listOfProduct.push(productList);
+
+    var totalProd = 0;
+
+    listOfProduct.forEach(product => {
+        totalProd += (product.price * product.cant);
+        var addinList = $(`<li>
+                              <p>`+ product.cant + ` ` + product.nombre + ` "` + product.description + `" $` + product.price + ` <button type="button" class="btn btn-danger" id="btnEliminar" onclick="delProd(` + product.id + `)">Del</button></p>
+                          </li>`);
+
+        $("#listOfProductsUp").append(addinList);
+       
+    });
+
+
+    
+    datosPedidoJson = JSON.stringify(listOfProduct);
+    $("#txtProductJsonUp").val(datosPedidoJson);
+    $("#idDescriptionProdUp").val('');
+    $("#totalPrecioUp").text('$' + totalProd);
+    $("#precioTotalIdUp").val(totalProd);
+    $("#cantidadProdUp").modal("hide");
+
+    
+
+}
+
+
+
+
+
+
 
 
 function delProd(id) {

@@ -100,9 +100,24 @@ class PedidoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
+
+        Pedido::where('pedido_id',$request["txtIdUpdate"])->update([
+            "pedido_cliente"=>$request["nombreClienteUp"],
+            "pedido_obj"=>$request["txtProductJsonUp"],
+            "pedido_mesa"=>$request["mesaClienteUp"],
+            "pedido_precio"=>$request["precioTotalUp"]
+
+        ]);
+        
+
+        $pedidos = Pedido::where('pedido_estado','!=','Pagado')->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.Mesa')->get();
+        $mesas= Mesa::all();
+        $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
+        return view('pages.home',compact('products','pedidos','mesas'));
+
     }
 
     /**

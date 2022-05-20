@@ -74,7 +74,7 @@
                         </button>
                     </td>
                     <td>
-                      <button class="btn btn-primary" onclick="updateOrder({{$pedido->pedido_id}},'{{$pedido->pedido_cliente}}',{{$pedido->pedido_mesa}},{{$pedido->pedido_obj}})">
+                      <button class="btn btn-primary" onclick="updateOrder({{$pedido->pedido_id}},'{{$pedido->pedido_cliente}}',{{$pedido->pedido_mesa}},{{$pedido->pedido_obj}},{{$pedido->pedido_precio}})">
                       
                         <i class="fa fa-pen"></i>
                       </button>
@@ -176,8 +176,9 @@
         </div>
         <div class="modal-body">
   
-            <form action="{{route('crear.pedido')}}" method="POST">
+            <form action="{{route('actualizar.pedido')}}" method="POST">
               @csrf
+                <input type="text" id="idUpdate" name="txtIdUpdate">
                 <div class="form-group">
                     <label for="idNameCliente">Nombre:</label>
                     <input type="text" name="nombreClienteUp" id="idNameClienteUp" class="form-control" placeholder="Ejemplo: Juan Cevallos">
@@ -192,7 +193,7 @@
                     </select>
                 </div>
                 <textarea name="txtProductJsonUp" id="txtProductJsonUp" cols="30" rows="10" ></textarea>
-                <input type="text" name="precioTotal" id="precioTotalId" hidden>
+                <input type="text" name="precioTotalUp" id="precioTotalIdUp" hidden>
                 <div class="form-group">
                     <label for="idProductos">Productos del pedido:</label>
                     <ul id="listOfProductsUp">
@@ -202,7 +203,7 @@
                     
                 </div>
             <hr>
-            <h3>Total: <b id="totalPrecio"></b></h3>
+            <h3>Total: <b id="totalPrecioUp"></b></h3>
                 <button type="submit" class="btn btn-primary">Crear pedido</button>
               </form>
             <hr>
@@ -270,6 +271,35 @@
           </div>
         </div>
       </div>
+
+   <!-- cantidad de productos en actualizar -->
+    <div class="modal fade" id="cantidadProdUp" tabindex="-1" role="dialog" aria-labelledby="cantidadProdUpLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Agregar producto</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <label id="idProdsUp"></label>
+            <h3>Producto: <label id="nameProdUp"></label></h3>
+            <h3>Precio: <label id="priceProdUp"></label></h3>
+            <label for="idCantProdUp"></label>
+            <input class="form-control" type="number" name="" id="idCantProdUp" min="1" max="15" placeholder="ingrese la cantida">
+
+            <label for="">Descripcion:</label>
+            <textarea class="form-control" name="productosSeleccion" id="idDescriptionProdUp" cols="10" rows="5" ></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Eliminar</button>
+            <button type="button" class="btn btn-primary" onclick="addToListUp()">Agregar</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
        <!-- Modal pagar producto -->
