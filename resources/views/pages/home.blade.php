@@ -221,7 +221,7 @@
                         <td>${{$product->product_price}}</td>
                         <td>{{$product->category_categoria}}</td>
                         <td>
-                            <button class="btn btn-success" onclick="agregarProducto({{$product->product_id}},'{{$product->product_name}}',{{$product->product_price}})"><i class="fa fa-circle-add"></i></button>
+                            <button class="btn btn-success" onclick="agregarProductoUpdate({{$product->product_id}},'{{$product->product_name}}',{{$product->product_price}})"><i class="fa fa-circle-add"></i></button>
                         </td>
                     </tr>
                     @endforeach
