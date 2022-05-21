@@ -14,6 +14,106 @@
 @section('content')
 <div class="col-lg">
 
+  @if (auth()->user()->rol == 'Cajero')
+
+<!-- Small boxes (Stat box) -->
+<div class="row">
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-success">  
+      <div class="inner">
+        @php
+            $sum = 0;
+        @endphp
+        @foreach ($pedidosPagos as $pedido)
+            @php
+                $sum = $sum+$pedido->pedido_precio;
+            @endphp
+            
+        @endforeach
+        <h3>${{$sum}}</h3>
+
+        <p>Ingresos</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-bag"></i>
+      </div>
+      <a href="#" class="small-box-footer">Mas informacion <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-danger">
+      <div class="inner">
+        <h3>53<sup style="font-size: 20px">%</sup></h3>
+
+        <p>Gastos</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-stats-bars"></i>
+      </div>
+      <a href="#" class="small-box-footer">Nuevo gasto <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-warning">
+      <div class="inner">
+
+        @php
+          $pedidosporpagar = 0;            
+        @endphp
+
+        @foreach ($pedidosSinPagar as $pedidos)
+            @php
+                $pedidosporpagar += 1;
+            @endphp
+        @endforeach
+        <h3>{{$pedidosporpagar}}</h3>
+
+        <p>Pedidos por pagar</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-person-add"></i>
+      </div>
+      <a href="#" class="small-box-footer">Mas informacion  <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-info">
+      <div class="inner">
+
+        @php
+        $totalpedidos = 0;            
+      @endphp
+
+      @foreach ($pedidosTotal as $pedidos)
+          @php
+              $totalpedidos += 1;
+          @endphp
+      @endforeach
+
+
+        <h3>{{$totalpedidos}}</h3>
+
+        <p>Total de pedidos</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-pie-graph"></i>
+      </div>
+      <a href="#" class="small-box-footer">Mas informacion  <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <!-- ./col -->
+</div>
+
+{{-- final de small boxes --}}
+@endif
+
 
     <button class="btn btn-lg btn-primary m-3" data-toggle="modal" data-target="#newOrder">Nuevo pedido</button>
     <div class="card card-primary card-outline">
@@ -28,12 +128,16 @@
                     <th class="col-2">Cliente:</th>
                     <th class="col-2">Mesero</th>
                     <th class="col-2">Total</th>
-                    <th class="col-1">Pagar</th>
+
+                    @if (auth()->user()->rol == 'Cajero')
+                        <th class="col-1">Pagar</th>
+                    @endif
+                    
                     <th class="col-1">Editar</th>
                 </tr>
             </thead>
             <tbody class="">
-                @foreach ($pedidos as $pedido)
+                @foreach ($pedidosSinPagar as $pedido)
                   <tr>
                     <td>{{$pedido->Mesa}}</td>
 
@@ -67,12 +171,14 @@
                     <td>
                      ${{$pedido->pedido_precio}}
                     </td>
-
-                    <td>
+                    @if (auth()->user()->rol == 'Cajero')
+                      <td>
                         <button class="btn btn-success" onclick="btnPagar({{$pedido->pedido_id}},{{$pedido->pedido_precio}})">
                             $
                         </button>
-                    </td>
+                      </td>  
+                    @endif
+                    
                     <td>
                       <button class="btn btn-primary" onclick="updateOrder({{$pedido->pedido_id}},'{{$pedido->pedido_cliente}}',{{$pedido->pedido_mesa}},{{$pedido->pedido_obj}},{{$pedido->pedido_precio}})">
                       

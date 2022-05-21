@@ -52,6 +52,7 @@
               </p>
             </a>
           </li>
+         @if (auth()->user()->rol == 'Cajero')
           <li class="nav-item">
             <a href="{{route('mesas')}}" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
@@ -60,6 +61,7 @@
               </p>
             </a>
           </li>
+         
           <li class="nav-item">
             <a href="{{route('home')}}" class="nav-link">
               <i class="nav-icon fas fa-history"></i>
@@ -68,14 +70,17 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{{route('meseros')}}" class="nav-link">
-              <i class="nav-icon fas fa-users"></i>
-              <p>
-                Meseros
-              </p>
-            </a>
-          </li>
+         
+              <li class="nav-item">
+                <a href="{{route('meseros')}}" class="nav-link">
+                  <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Meseros
+                  </p>
+                </a>
+              </li>
+          
+          
           <li class="nav-item">
             <a href="{{route('home')}}" class="nav-link">
               <i class="nav-icon fas fa-cog"></i>
@@ -84,6 +89,8 @@
               </p>
             </a>
           </li>
+
+          @endif
           <li class="nav-item">
             <a href="{{ route('logouts') }}" class="nav-link">
               <i class="nav-icon fas fa-times"></i>
