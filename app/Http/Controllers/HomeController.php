@@ -26,6 +26,12 @@ class HomeController extends Controller
      */
   
 
+     public function logouts()
+     {
+         # code...
+         auth()->logout();
+         return view('auth.login');
+     }
      
 
     public function __invoke(Request $request)

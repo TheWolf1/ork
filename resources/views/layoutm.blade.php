@@ -18,7 +18,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('assets/dist/css/adminlte.min.css')}}">
   @yield('css')
 </head>
-<body class="dark-mode hold-transition sidebar-mini sidebar-collapse">
+<body class=" hold-transition sidebar-mini sidebar-collapse">
 <div class="wrapper">
 
   <!-- Navbar -->

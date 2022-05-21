@@ -107,7 +107,7 @@
               @csrf
                 <div class="form-group">
                     <label for="idNameCliente">Nombre cliente:</label>
-                    <input type="text" name="nombreCliente" id="idNameCliente" class="form-control" placeholder="Ejemplo: Juan Cevallos">
+                    <input type="text" name="nombreCliente" id="idNameCliente" class="form-control" placeholder="Ejemplo: Juan Cevallos" required>
                 </div>
                 <div class="form-group">
                     <label for="idMesaCliente">Mesa:</label>
@@ -359,4 +359,7 @@
 <script src="{{asset('assets/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
 <script src="{{asset('assets/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
 <script src="{{asset('assets/dist/js/main.js')}}"></script>
+
+
+
 @endsection

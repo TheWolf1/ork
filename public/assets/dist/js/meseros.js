@@ -1,5 +1,8 @@
 
 
+
+
+
 function mostrarUser(id,name,rol,email) {
     
 
@@ -14,4 +17,6 @@ function mostrarUser(id,name,rol,email) {
 
 
     $("#emailUp").val(email);
+
+    
 }

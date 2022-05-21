@@ -52,6 +52,17 @@ Route::get('meseros',MeseroController::class)->name('meseros');
 Route::post('meseros/crear',[MeseroController::class,'create'])->name('mesero.crear');
 Route::post('meseros/update',[MeseroController::class,'update'])->name('mesero.actualizar');
 
+
+
+
+
+
+
+
+
+Route::get('logouts',[HomeController::class,'logouts'])->name('logouts');
+
+
 Auth::routes();
 
 /*Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

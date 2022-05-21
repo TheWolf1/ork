@@ -250,5 +250,11 @@
 @endsection
 
 @section('script')
+
+<script>
+
+
+    
+</script>
 <script src="{{asset('assets/dist/js/meseros.js')}}"></script>
 @endsection

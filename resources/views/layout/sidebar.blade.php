@@ -46,7 +46,7 @@
           </li>
           <li class="nav-item">
             <a href="{{route('product')}}" class="nav-link">
-              <i class="nav-icon fas fa-shopping-cart"></i>
+              <i class="nav-icon fas fa-coffee"></i>
               <p>
                 Productos
               </p>
@@ -85,7 +85,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{route('home')}}" class="nav-link">
+            <a href="{{ route('logouts') }}" class="nav-link">
               <i class="nav-icon fas fa-times"></i>
               <p>
                 Salir
