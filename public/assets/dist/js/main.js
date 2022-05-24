@@ -260,7 +260,10 @@ function delProdUp(id) {
     console.log(eliminarProd);
 }
 
-// datos de las tablas
+
+
+
+    // datos de las tablas
 $('#tbPedidos').DataTable({
     "paging": true,
     "lengthChange": false,

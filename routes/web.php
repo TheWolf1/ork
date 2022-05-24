@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\MesaController;
+use App\Http\Controllers\GastosController;
 use App\Http\Controllers\MeseroController;
 use App\Http\Controllers\starterPageController;
 /*
@@ -53,10 +54,10 @@ Route::post('meseros/crear',[MeseroController::class,'create'])->name('mesero.cr
 Route::post('meseros/update',[MeseroController::class,'update'])->name('mesero.actualizar');
 
 
+Route::post('gastos/crear',[GastosController::class,'create'])->name('gastos.crear');
 
 
-
-
+Route::post('escuchador',[HomeController::class,'listener'])->name('listenerPedidos');
 
 
 

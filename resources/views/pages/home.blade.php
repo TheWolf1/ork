@@ -12,12 +12,14 @@
   <link rel="stylesheet" href="{{asset('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
 @endsection
 @section('content')
-<div class="col-lg">
+
+
+<div class="col-lg" id="contentId">
 
   @if (auth()->user()->rol == 'Cajero')
 
 <!-- Small boxes (Stat box) -->
-<div class="row">
+<div class="row" >
   <div class="col-lg-3 col-6">
     <!-- small box -->
     <div class="small-box bg-success">  
@@ -42,18 +44,27 @@
     </div>
   </div>
   <!-- ./col -->
-  <div class="col-lg-3 col-6">
+  <div class="col-lg-3 col-6" >
     <!-- small box -->
     <div class="small-box bg-danger">
-      <div class="inner">
-        <h3>53<sup style="font-size: 20px">%</sup></h3>
-
+      <div class="inner" >
+        @php
+        $sumGastos = 0;
+        @endphp
+        @foreach ($gastos as $gasto)
+            @php
+                $sumGastos = $sumGastos+$gasto->gastos_cantidad;
+            @endphp
+           
+        @endforeach
+        <h3>${{$sumGastos}}</h3>
+        
         <p>Gastos</p>
       </div>
       <div class="icon">
         <i class="ion ion-stats-bars"></i>
       </div>
-      <a href="#" class="small-box-footer">Nuevo gasto <i class="fas fa-arrow-circle-right"></i></a>
+      <a href="#" class="small-box-footer" data-toggle="modal" data-target="#addGasto">Nuevo gasto <i class="fas fa-arrow-circle-right"></i></a>
     </div>
   </div>
   <!-- ./col -->
@@ -136,7 +147,7 @@
                     <th class="col-1">Editar</th>
                 </tr>
             </thead>
-            <tbody class="">
+            <tbody class="" id="tbodyPedidosId">
                 @foreach ($pedidosSinPagar as $pedido)
                   <tr>
                     <td>{{$pedido->Mesa}}</td>
@@ -209,7 +220,7 @@
         </div>
         <div class="modal-body">
 
-            <form action="{{route('crear.pedido')}}" method="POST">
+            <form action="#" method="POST" id="formCrearPedidoId">
               @csrf
                 <div class="form-group">
                     <label for="idNameCliente">Nombre cliente:</label>
@@ -430,7 +441,7 @@
               <label for="restPago">Con cuanto te pago:</label>
               <input type="text" class="form-control" id="restPagoId" placeholder="Ejemplo: 20">
             </div>
-            <form action="{{route('pagar.pedido')}}" method="POST">
+            <form action="#" method="POST" id="formPagarPedidoId">
               @csrf
               <input type="text" id="idPedidoPago" name="idPedidoPago" hidden>
             
@@ -447,7 +458,38 @@
 
 
 
-
+<!-- Modal de gastos -->
+  <!-- Nuevo gasto -->
+  <div class="modal fade" id="addGasto" tabindex="-1" role="dialog" aria-labelledby="addGastoLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ingresar Gasto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id="formNewGasto" method="POST">
+              @csrf
+                <div class="form-group">
+                    <label for="idValorGasto">¿Cuanto gastaste?</label>
+                    <input type="text" id="idValorGasto" name="valorGasto" class="form-control" placeholder="Ejemplo: 5.50">
+                </div>
+                <div class="form-group">
+                  <label for="nameCategory">¿En que gastaste?</label>
+                  <textarea class="form-control" name="descriptionGasto" id="idDescriptionGasto" cols="30" rows="5"></textarea>
+              </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" id="btnFormNewGasto" class="btn btn-primary">Guardar</button>
+        
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('script')
@@ -466,6 +508,93 @@
 <script src="{{asset('assets/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
 <script src="{{asset('assets/dist/js/main.js')}}"></script>
 
+<script>
 
+$("#btnFormNewGasto").click((e)=>{
+  e.preventDefault();
+  var data = $("#formNewGasto").serializeArray();
+
+  $.ajax({
+    type:'POST',
+    data: data,
+    url:"{{route('gastos.crear')}}",
+    success:function(result){
+      alertaFun(result[0].code,result[0].mesaje);
+      $("#contentId").load(" #contentId");
+      $("#addGasto").modal("hide");
+      $("#formNewGasto").trigger("reset");
+   
+    }
+  });
+
+});
+
+
+
+$("#formPagarPedidoId").submit((e)=>{
+  e.preventDefault();
+  var data = $("#formPagarPedidoId").serializeArray();
+  $.ajax({
+    type:"POST",
+    data:data,
+    url:"{{route('pagar.pedido')}}",
+    success:(res)=>{
+      alertaFun(res[0].code,res[0].mesaje);
+      $("#pagarPedido").modal("hide");
+      $("#formPagarPedidoId").trigger("reset");
+      $("#contentId").load(" #contentId");
+     $("#totalPagar").text('');
+     $("#devolverId").text('');
+
+    }
+  });
+});
+
+
+
+$("#formCrearPedidoId").submit((e)=>{
+  e.preventDefault();
+  
+  var data = $("#formCrearPedidoId").serializeArray();
+  $.ajax({
+    type:"POST",
+    data:data,
+    url:"{{route('crear.pedido')}}",
+    success:(res)=>{
+      alertaFun(res[0].code,res[0].mesaje);
+      $("#contentId").load(" #contentId");
+      $("#newOrder").modal("hide");
+      $("#formCrearPedidoId").trigger("reset");
+      $("#listOfProducts").html('');
+      $("#totalPrecio").html('');
+      
+      
+      listOfProduct = [];
+    }
+  });
+});
+
+
+
+var nroPedidosNow = 0;
+setInterval(() => {
+  $.ajax({
+    type:"POST",
+    data:{
+      "_token": "{{ csrf_token() }}" 
+    },
+    url:"{{route('listenerPedidos')}}",
+    success:(res)=>{
+        if(res!=nroPedidosNow){
+          nroPedidosNow = res;
+          $("#tbPedidos").load(" #tbPedidos");
+          
+        }
+        
+    }
+  });
+}, 3000);
+
+</script>
 
 @endsection

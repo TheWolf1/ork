@@ -7,6 +7,7 @@ use App\Models\Pedido;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Mesa;
+use App\Models\Gasto;
 use Illuminate\Support\Facades\Auth;
 
 class PedidoController extends Controller
@@ -29,24 +30,32 @@ class PedidoController extends Controller
     public function create(Request $request)
     {
         //
-        $mesero = Auth::id();
+        try {
+            //code...
+             $mesero = Auth::id();
 
-        $newPedido = new Pedido;
+            $newPedido = new Pedido;
 
-        $newPedido->pedido_obj = $request['txtProductJson'];
-        $newPedido->pedido_cliente = $request['nombreCliente'];
-        $newPedido->pedido_mesero =  $mesero;
-        $newPedido->pedido_mesa =$request['mesaCliente'];
-        $newPedido->pedido_estado = "En Proceso";
-        $newPedido->pedido_precio =$request['precioTotal'];
+            $newPedido->pedido_obj = $request['txtProductJson'];
+            $newPedido->pedido_cliente = $request['nombreCliente'];
+            $newPedido->pedido_mesero =  $mesero;
+            $newPedido->pedido_mesa =$request['mesaCliente'];
+            $newPedido->pedido_estado = "En Proceso";
+            $newPedido->pedido_precio =$request['precioTotal'];
 
-        $newPedido->save();
+            $newPedido->save();
 
-
-        $pedidos = Pedido::where('pedido_estado','!=','Pagado')->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.Mesa')->get();
-        $mesas= Mesa::all();
-        $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
-        return view('pages.home',compact('products','pedidos','mesas'));
+            return array([
+                "code"=>200,
+                "mesaje"=>"Pedido creado exitosamente"
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th
+            return array([
+                "code"=>500,
+                "mesaje"=>"Hubo un error"
+            ]);
+        }
         
     }
 
@@ -54,14 +63,23 @@ class PedidoController extends Controller
     public function pagar(Request $request)
     {
         # code...
-        Pedido::where('pedido_id',$request['idPedidoPago'])->update([
-            'pedido_estado'=> 'Pagado'
-        ]);
+       
 
-        $pedidos = Pedido::where('pedido_estado','!=','Pagado')->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.Mesa')->get();
-        $mesas= Mesa::all();
-        $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
-        return view('pages.home',compact('products','pedidos','mesas'));
+        try {
+             Pedido::where('pedido_id',$request['idPedidoPago'])->update([
+                'pedido_estado'=> 'Pagado'
+            ]);
+            return array([
+                "code"=>200,
+                "mesaje"=>"Pedido pagado exitosamente"
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return array([
+                "code"=>500,
+                "mesaje"=>"Hubo un error"
+            ]);
+        }
     }
    
 
@@ -113,10 +131,15 @@ class PedidoController extends Controller
         ]);
         
 
-        $pedidos = Pedido::where('pedido_estado','!=','Pagado')->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.Mesa')->get();
-        $mesas= Mesa::all();
+        $dateTimeInit = date('Y-m-d 05:00:00', time());  
+        $dateTimeFin = date('Y-m-d 05:00:00', strtotime($dateTimeInit."+ 1 days"));
+        $gastos = Gasto::where('created_at','>',$dateTimeInit)->where('created_at','<',$dateTimeFin)->get();
+        $pedidosTotal = Pedido::where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
+        $pedidosPagos = Pedido::where('pedido_estado','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
+        $pedidosSinPagar = Pedido::where('pedido_estado','!=','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
         $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
-        return view('pages.home',compact('products','pedidos','mesas'));
+        $mesas= Mesa::all();
+        return view('pages.home',compact('products','pedidosSinPagar','mesas','pedidosPagos','pedidosTotal','gastos'));
 
     }
 
@@ -132,9 +155,14 @@ class PedidoController extends Controller
 
         Pedido::where('pedido_id',$request["DelPedidoName"])->delete();
 
-        $pedidos = Pedido::where('pedido_estado','!=','Pagado')->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.Mesa')->get();
-        $mesas= Mesa::all();
+        $dateTimeInit = date('Y-m-d 05:00:00', time());  
+        $dateTimeFin = date('Y-m-d 05:00:00', strtotime($dateTimeInit."+ 1 days"));
+        $gastos = Gasto::where('created_at','>',$dateTimeInit)->where('created_at','<',$dateTimeFin)->get();
+        $pedidosTotal = Pedido::where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
+        $pedidosPagos = Pedido::where('pedido_estado','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
+        $pedidosSinPagar = Pedido::where('pedido_estado','!=','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
         $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
-        return view('pages.home',compact('products','pedidos','mesas'));
+        $mesas= Mesa::all();
+        return view('pages.home',compact('products','pedidosSinPagar','mesas','pedidosPagos','pedidosTotal','gastos'));
     }
 }
