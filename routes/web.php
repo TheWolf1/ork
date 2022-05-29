@@ -42,6 +42,7 @@ Route::post('pedido/crear',[PedidoController::class,'create'])->name('crear.pedi
 Route::post('pedido/pagar',[PedidoController::class,'pagar'])->name('pagar.pedido');
 Route::post('pedido/actualizar',[PedidoController::class,'update'])->name('actualizar.pedido');
 Route::post('pedido/eliminar',[PedidoController::class,'destroy'])->name('eliminar.pedido');
+Route::post('pedido/listo',[PedidoController::class,'store'])->name('listo.pedido');
 
 
 

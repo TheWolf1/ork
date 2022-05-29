@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{{asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
   <link rel="stylesheet" href="{{asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
   <link rel="stylesheet" href="{{asset('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{asset('assets/dist/css/main.css')}}">
 @endsection
 @section('content')
 
@@ -23,7 +24,7 @@
   <div class="col-lg-3 col-6">
     <!-- small box -->
     <div class="small-box bg-success">  
-      <div class="inner">
+      <div class="inner" id="ingresosId">
         @php
             $sum = 0;
         @endphp
@@ -47,7 +48,7 @@
   <div class="col-lg-3 col-6" >
     <!-- small box -->
     <div class="small-box bg-danger">
-      <div class="inner" >
+      <div class="inner" id="gastosId">
         @php
         $sumGastos = 0;
         @endphp
@@ -71,7 +72,7 @@
   <div class="col-lg-3 col-6">
     <!-- small box -->
     <div class="small-box bg-warning">
-      <div class="inner">
+      <div class="inner" id="pedidosPorPagarId">
 
         @php
           $pedidosporpagar = 0;            
@@ -96,7 +97,7 @@
   <div class="col-lg-3 col-6">
     <!-- small box -->
     <div class="small-box bg-info">
-      <div class="inner">
+      <div class="inner" id="totalPedidosid">
 
         @php
         $totalpedidos = 0;            
@@ -124,21 +125,21 @@
 
 {{-- final de small boxes --}}
 @endif
-
-
-    <button class="btn btn-lg btn-primary m-3" data-toggle="modal" data-target="#newOrder">Nuevo pedido</button>
+ <button class="btn btn-lg btn-primary m-3" data-toggle="modal" data-target="#newOrder">Nuevo pedido</button>
+<!-- Tabla de pedidos por cobrar en proceso -->
     <div class="card card-primary card-outline">
-      <div class="card-body">
-        <h5 class="card-title">Pedidos po cobrar</h5>
+      <div class="card-body table-responsive">
+        <h5 class="card-title">Pedidos por cobrar en proceso</h5>
 
         <table class="table table-hover" id="tbPedidos">
             <thead>
                 <tr>
                     <th class="col-1">Mesa:</th>
-                    <th>Pedido</th>
-                    <th class="col-2">Cliente:</th>
-                    <th class="col-2">Mesero</th>
-                    <th class="col-2">Total</th>
+                    <th class="col-4">Pedido</th>
+                    <th class="col-1">Cliente:</th>
+                    <th class="col-1">Mesero</th>
+                    <th class="col-2">Estado</th>
+                    <th class="col-1">Total</th>
 
                     @if (auth()->user()->rol == 'Cajero')
                         <th class="col-1">Pagar</th>
@@ -161,27 +162,48 @@
                       <ul>
                     @foreach ($objPedido as $pedObj)
                       @if (empty($pedObj->description))
-                          <li>{{$pedObj->cant}} {{$pedObj->nombre}}  </li>
-                      @else
+
+                      <li>{{$pedObj->cant}} {{$pedObj->nombre}} - @if ($pedObj->status == 1)
+                        <span class="right badge badge-success">Entregado</span>
                         
-                          <li>{{$pedObj->cant}} {{$pedObj->nombre}}  "{{$pedObj->description}}" </li>
+                      @else
+                      <span class="right badge badge-info">Procesando</span>
+                      @endif   </li>
+                             
+                      @else
+                            
+                      <li>{{$pedObj->cant}} {{$pedObj->nombre}}  "{{$pedObj->description}}" - @if ($pedObj->status == 1)
+                        <span class="right badge badge-success">Entregado</span>
+                        
+                      @else
+                      <span class="right badge badge-info">Procesando</span>
+                      @endif  </li>
+                            
                         
                       @endif
                      @endforeach
 
                      
-                     
-                    
-                        
-                            
-                            
-                        </ul>
+                      </ul>       
+                       
                     </td>
                     <td >{{$pedido->pedido_cliente}}</td>
                     <td>{{$pedido->name}}</td>
+                    <td class="<?php if ($pedido->pedido_estado == "En Proceso") {
+                      # code...
+                      echo "bg-info";
+                    } ?>  " >
+                    
+                    <select name="selecStatus"  class="form-control selecStatusId" data-id="{{$pedido->pedido_id}}">
+
+                      <option value="En Proceso" >En proceso</option>
+                      <option value="Listo" >Listo</option>
+                    </select>
+                    {{-- {{$pedido->pedido_estado}}</td> --}}
                     <td>
                      ${{$pedido->pedido_precio}}
                     </td>
+                    
                     @if (auth()->user()->rol == 'Cajero')
                       <td>
                         <button class="btn btn-success" onclick="btnPagar({{$pedido->pedido_id}},{{$pedido->pedido_precio}})">
@@ -205,8 +227,117 @@
        
       </div>
     </div><!-- /.card -->
-  </div>
+ 
+  <!-- Tabla de pedidos por cobrar Listo -->
 
+  <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h4 class="card-title">Pedidos por cobrar Listo</h4>
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+          <i class="fas fa-minus"></i>
+        </button> 
+      </div>
+    </div>
+    <div class="card-body table-responsive">
+      
+
+      <table class="table table-hover" id="tbPedidosListos">
+          <thead>
+              <tr>
+                  <th class="col-1">Mesa:</th>
+                  <th class="col-4">Pedido</th>
+                  <th class="col-1">Cliente:</th>
+                  <th class="col-1">Mesero</th>
+                  <th class="col-2">Estado</th>
+                  <th class="col-1">Total</th>
+
+                  @if (auth()->user()->rol == 'Cajero')
+                      <th class="col-1">Pagar</th>
+                  @endif
+                  
+                  <th class="col-1">Editar</th>
+              </tr>
+          </thead>
+          <tbody class="" id="tbodyPedidosId">
+              @foreach ($pedidosSPListos as $pedido)
+                <tr>
+                  <td>{{$pedido->Mesa}}</td>
+
+
+                  @php
+                    $objPedido = json_decode($pedido->pedido_obj);
+                  @endphp
+                  
+                  <td>
+                    <ul>
+                  @foreach ($objPedido as $pedObj)
+                    @if (empty($pedObj->description))
+
+                    <li>{{$pedObj->cant}} {{$pedObj->nombre}} - @if ($pedObj->status == 1)
+                      <span class="right badge badge-success">Entregado</span>
+                      
+                    @else
+                    <span class="right badge badge-info">Procesando</span>
+                    @endif </li>
+                           
+                    @else
+                          
+                    <li>{{$pedObj->cant}} {{$pedObj->nombre}}  "{{$pedObj->description}}" - @if ($pedObj->status == 1)
+                      <span class="right badge badge-success">Entregado</span>
+                      
+                    @else
+                    <span class="right badge badge-info">Procesando</span>
+                    @endif   </li>
+                          
+                      
+                    @endif
+                   @endforeach
+
+                   
+                    </ul>       
+                     
+                  </td>
+                  <td >{{$pedido->pedido_cliente}}</td>
+                  <td>{{$pedido->name}}</td>
+                  <td class="<?php if ($pedido->pedido_estado == "Listo") {
+                    # code...
+                    echo "bg-primary";
+                  } ?>  " >
+                  
+                  <select name="selecStatus"  class="form-control selecStatusId" data-id="{{$pedido->pedido_id}}">
+                    <option value="Listo" >Listo</option>
+                    <option value="En Proceso" >En proceso</option>
+                    
+                  </select>
+                  {{-- {{$pedido->pedido_estado}}</td> --}}
+                  <td>
+                   ${{$pedido->pedido_precio}}
+                  </td>
+                  
+                  @if (auth()->user()->rol == 'Cajero')
+                    <td>
+                      <button class="btn btn-success" onclick="btnPagar({{$pedido->pedido_id}},{{$pedido->pedido_precio}})">
+                          $
+                      </button>
+                    </td>  
+                  @endif
+                  
+                  <td>
+                    <button class="btn btn-primary" onclick="updateOrder({{$pedido->pedido_id}},'{{$pedido->pedido_cliente}}',{{$pedido->pedido_mesa}},{{$pedido->pedido_obj}},{{$pedido->pedido_precio}})">
+                    
+                      <i class="fa fa-pen"></i>
+                    </button>
+                  </td>
+              </tr>   
+              @endforeach
+             
+          </tbody>
+
+      </table>
+     
+    </div>
+  </div><!-- /.card -->
     <!-- Nueva Orden -->
 <div class="modal fade " id="newOrder" tabindex="-1" role="dialog" aria-labelledby="newOrderLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -509,6 +640,34 @@
 <script src="{{asset('assets/dist/js/main.js')}}"></script>
 
 <script>
+$(".selecStatusId").change((e)=>{
+  e.preventDefault();
+  var value = e.target.value;
+  var id = e.target.dataset.id;
+  
+  $.ajax({
+    type: "POST",
+    data:{
+      "_token": "{{ csrf_token() }}",
+      "id": id,
+      "value":value
+    },
+    url:"{{route('listo.pedido')}}",
+    success:function(result){
+      alertaFun(result[0].code,result[0].mesaje);
+
+    
+      window.location.href = "/";
+      
+    }
+  });
+
+
+
+});
+
+
+
 
 $("#btnFormNewGasto").click((e)=>{
   e.preventDefault();
@@ -520,7 +679,7 @@ $("#btnFormNewGasto").click((e)=>{
     url:"{{route('gastos.crear')}}",
     success:function(result){
       alertaFun(result[0].code,result[0].mesaje);
-      $("#contentId").load(" #contentId");
+      $("#gastosId").load(" #gastosId");
       $("#addGasto").modal("hide");
       $("#formNewGasto").trigger("reset");
    
@@ -542,7 +701,9 @@ $("#formPagarPedidoId").submit((e)=>{
       alertaFun(res[0].code,res[0].mesaje);
       $("#pagarPedido").modal("hide");
       $("#formPagarPedidoId").trigger("reset");
-      $("#contentId").load(" #contentId");
+      $("#tbPedidos").load(" #tbPedidos");
+      $("#ingresosId").load(" #ingresosId");
+      $("#pedidosPorPagarId").load(" #pedidosPorPagarId");
      $("#totalPagar").text('');
      $("#devolverId").text('');
 
@@ -562,7 +723,9 @@ $("#formCrearPedidoId").submit((e)=>{
     url:"{{route('crear.pedido')}}",
     success:(res)=>{
       alertaFun(res[0].code,res[0].mesaje);
-      $("#contentId").load(" #contentId");
+      $("#tbPedidos").load(" #tbPedidos");
+      $("#totalPedidosid").load(" #totalPedidosid");
+      $("#pedidosPorPagarId").load(" #pedidosPorPagarId");
       $("#newOrder").modal("hide");
       $("#formCrearPedidoId").trigger("reset");
       $("#listOfProducts").html('');
@@ -576,7 +739,13 @@ $("#formCrearPedidoId").submit((e)=>{
 
 
 
+
 var nroPedidosNow = 0;
+var primeraCarga =false;
+
+
+
+
 setInterval(() => {
   $.ajax({
     type:"POST",
@@ -586,8 +755,14 @@ setInterval(() => {
     url:"{{route('listenerPedidos')}}",
     success:(res)=>{
         if(res!=nroPedidosNow){
-          nroPedidosNow = res;
-          $("#tbPedidos").load(" #tbPedidos");
+          if (primeraCarga) {
+            
+            window.location.href = "/";
+          } else {
+            primeraCarga = true;
+            nroPedidosNow = res;
+          }
+         
           
         }
         

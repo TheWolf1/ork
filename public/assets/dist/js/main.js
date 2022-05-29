@@ -1,3 +1,9 @@
+
+
+  
+
+
+
 //funcion de pagar los pedidos
 
 function btnPagar(id, precio) {
@@ -110,7 +116,8 @@ function addToList() {
         nombre: nombre,
         price: parseFloat(price),
         cant: parseFloat(cant),
-        description: description
+        description: description,
+        status:0
     };
 
 
@@ -160,7 +167,8 @@ function addToListUp() {
         nombre: nombre,
         price: parseFloat(price),
         cant: parseFloat(cant),
-        description: description
+        description: description,
+        status:0
     };
 
 
@@ -199,7 +207,6 @@ $("#btnEliminarPedido").click((e)=>{
     $("#formDelPedido").submit();
     
 });
-
 
 
 

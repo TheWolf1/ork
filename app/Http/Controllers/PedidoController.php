@@ -87,6 +87,42 @@ class PedidoController extends Controller
     public function store(Request $request)
     {
         //
+        
+        
+
+
+        try {
+            //code...
+            
+
+            $cambioStatus = Pedido::where('pedido_id',$request['id'])->first();
+
+            $arrays =json_decode($cambioStatus['pedido_obj']);
+            
+            foreach ($arrays as $array) {
+                # code...
+                //$array['status'];
+                $array->status = 1;
+                $value = $array->status;
+            }
+
+
+            Pedido::where('pedido_id',$request['id'])->update([
+                "pedido_estado"=>$request['value'],
+                "pedido_obj" => json_encode($arrays)
+            ]);
+            return array([
+                "code"=>200,
+                "mesaje"=>"Pedido Listo"
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return array([
+                "code"=>500,
+                "mesaje"=>"Hubo un error" .$th
+            ]);
+
+        }
     }
 
     /**
@@ -126,7 +162,8 @@ class PedidoController extends Controller
             "pedido_cliente"=>$request["nombreClienteUp"],
             "pedido_obj"=>$request["txtProductJsonUp"],
             "pedido_mesa"=>$request["mesaClienteUp"],
-            "pedido_precio"=>$request["precioTotalUp"]
+            "pedido_precio"=>$request["precioTotalUp"],
+            "pedido_estado"=>"En Proceso"
 
         ]);
         
@@ -136,10 +173,11 @@ class PedidoController extends Controller
         $gastos = Gasto::where('created_at','>',$dateTimeInit)->where('created_at','<',$dateTimeFin)->get();
         $pedidosTotal = Pedido::where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
         $pedidosPagos = Pedido::where('pedido_estado','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
-        $pedidosSinPagar = Pedido::where('pedido_estado','!=','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
+        $pedidosSinPagar = Pedido::where('pedido_estado','En Proceso')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
+        $pedidosSPListos =  Pedido::where('pedido_estado','Listo')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
         $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
         $mesas= Mesa::all();
-        return view('pages.home',compact('products','pedidosSinPagar','mesas','pedidosPagos','pedidosTotal','gastos'));
+        return view('pages.home',compact('products','pedidosSinPagar','mesas','pedidosPagos','pedidosTotal','gastos','pedidosSPListos'));
 
     }
 
@@ -159,10 +197,11 @@ class PedidoController extends Controller
         $dateTimeFin = date('Y-m-d 05:00:00', strtotime($dateTimeInit."+ 1 days"));
         $gastos = Gasto::where('created_at','>',$dateTimeInit)->where('created_at','<',$dateTimeFin)->get();
         $pedidosTotal = Pedido::where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
+        $pedidosSPListos =  Pedido::where('pedido_estado','Listo')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
         $pedidosPagos = Pedido::where('pedido_estado','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
         $pedidosSinPagar = Pedido::where('pedido_estado','!=','Pagado')->where('pedido.created_at','>',$dateTimeInit)->where('pedido.created_at','<',$dateTimeFin)->join('users','pedido_mesero','=','id')->join('mesa','pedido_mesa','=','mesa_id')->select('pedido.*','users.name','mesa.*')->get();
         $products = Product::join('category','product_category',"=",'category_id')->select("product.*","category.category_id","category_categoria")->get();
         $mesas= Mesa::all();
-        return view('pages.home',compact('products','pedidosSinPagar','mesas','pedidosPagos','pedidosTotal','gastos'));
+        return view('pages.home',compact('products','pedidosSinPagar','mesas','pedidosPagos','pedidosTotal','gastos','pedidosSPListos'));
     }
 }
