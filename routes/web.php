@@ -7,6 +7,7 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\MesaController;
 use App\Http\Controllers\GastosController;
 use App\Http\Controllers\MeseroController;
+use App\Http\Controllers\CajaController;
 use App\Http\Controllers\starterPageController;
 /*
 |--------------------------------------------------------------------------
@@ -60,7 +61,7 @@ Route::post('gastos/crear',[GastosController::class,'create'])->name('gastos.cre
 
 Route::post('escuchador',[HomeController::class,'listener'])->name('listenerPedidos');
 
-
+Route::post('/crear',[CajaController::class,'store'])->name("caja.crear");
 
 Route::get('logouts',[HomeController::class,'logouts'])->name('logouts');
 

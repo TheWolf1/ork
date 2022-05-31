@@ -76,7 +76,7 @@ function agregarProducto(id, nombre, precio) {
     $("#priceProd").text(precio);
 
 
-
+   
     $("#cantidadProd").modal("show");
 
 }

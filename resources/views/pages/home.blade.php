@@ -34,14 +34,19 @@
             @endphp
             
         @endforeach
-        <h3>${{$sum}}</h3>
+
+        @php
+            $sumTot = $sum+$caja->caja_cantidad;
+        @endphp
+        <h3>${{$sumTot}}</h3>
 
         <p>Ingresos</p>
       </div>
       <div class="icon">
         <i class="ion ion-bag"></i>
       </div>
-      <a href="#" class="small-box-footer">Mas informacion <i class="fas fa-arrow-circle-right"></i></a>
+      
+      <a href="#" class="small-box-footer" data-toggle="modal" data-target="#addCaja">Agregar caja<i class="fas fa-arrow-circle-right"></i></a>
     </div>
   </div>
   <!-- ./col -->
@@ -304,12 +309,8 @@
                     # code...
                     echo "bg-primary";
                   } ?>  " >
+                  <h3>Listo</h3>
                   
-                  <select name="selecStatus"  class="form-control selecStatusId" data-id="{{$pedido->pedido_id}}">
-                    <option value="Listo" >Listo</option>
-                    <option value="En Proceso" >En proceso</option>
-                    
-                  </select>
                   {{-- {{$pedido->pedido_estado}}</td> --}}
                   <td>
                    ${{$pedido->pedido_precio}}
@@ -340,7 +341,7 @@
   </div><!-- /.card -->
     <!-- Nueva Orden -->
 <div class="modal fade " id="newOrder" tabindex="-1" role="dialog" aria-labelledby="newOrderLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
 
@@ -414,7 +415,7 @@
   </div>
 <!-- Actualizar orden -->
   <div class="modal fade " id="updateOrder" tabindex="-1" role="dialog" aria-labelledby="updateOrderLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Actualizar orden Orden</h5>
@@ -586,7 +587,35 @@
         </div>
       </div>
     </div>
-
+<!-- Modal de caja -->
+  <!-- Ingresar caja -->
+  <div class="modal fade" id="addCaja" tabindex="-1" role="dialog" aria-labelledby="addCajaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ingresar caja</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id="formNewCaja" method="POST">
+              @csrf
+                <div class="form-group">
+                    <label for="idValorCaja">¿Cuanto vas a ingresar de caja?</label>
+                    <input type="text" id="idValorCaja" name="valorCaja" class="form-control" placeholder="Ejemplo: 5.50">
+                </div>
+                
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit"  class="btn btn-primary">Guardar</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 <!-- Modal de gastos -->
@@ -640,6 +669,27 @@
 <script src="{{asset('assets/dist/js/main.js')}}"></script>
 
 <script>
+
+
+
+//agregar caja
+$("#formNewCaja").submit((e)=>{
+  e.preventDefault();
+  var data = $("#formNewCaja").serializeArray();
+  $.ajax({
+    type:"POST",
+    data:data,
+    url:"{{route('caja.crear')}}",
+    success:(result)=>{
+      alertaFun(result[0].code,result[0].mesaje); 
+      $("#addCaja").modal("hide");
+      $("#ingresosId").load(" #ingresosId");
+    }
+  });
+  
+});
+
+
 $(".selecStatusId").change((e)=>{
   e.preventDefault();
   var value = e.target.value;
