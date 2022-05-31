@@ -13,7 +13,7 @@
           <img src="{{asset('assets/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block">{{auth()->user()->name}}</a>
         </div>
       </div>
 
@@ -40,18 +40,35 @@
               <i class="nav-icon fas fa-home"></i>
               <p>
                 Inicio
-                <span class="right badge badge-danger">New</span>
+                
               </p>
             </a>
           </li>
+         
           <li class="nav-item">
-            <a href="{{route('product')}}" class="nav-link">
-              <i class="nav-icon fas fa-shopping-cart"></i>
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-coffee"></i>
               <p>
                 Productos
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('product')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Categorias</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="pages/charts/chartjs.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Todos los productos</p>
+                </a>
+              </li>
+            </ul>
           </li>
+         @if (auth()->user()->rol == 'Cajero')
           <li class="nav-item">
             <a href="{{route('mesas')}}" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
@@ -60,22 +77,41 @@
               </p>
             </a>
           </li>
+         
+          
           <li class="nav-item">
-            <a href="{{route('home')}}" class="nav-link">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-history"></i>
               <p>
-                Historial de ventas
+                Historial
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('product')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Historial de ventas</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="pages/charts/chartjs.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Historial de gastos</p>
+                </a>
+              </li>
+            </ul>
           </li>
-          <li class="nav-item">
-            <a href="{{route('home')}}" class="nav-link">
-              <i class="nav-icon fas fa-users"></i>
-              <p>
-                Meseros
-              </p>
-            </a>
-          </li>
+              <li class="nav-item">
+                <a href="{{route('meseros')}}" class="nav-link">
+                  <i class="nav-icon fas fa-users"></i>
+                  <p>
+                    Meseros
+                  </p>
+                </a>
+              </li>
+          
+          
           <li class="nav-item">
             <a href="{{route('home')}}" class="nav-link">
               <i class="nav-icon fas fa-cog"></i>
@@ -84,8 +120,10 @@
               </p>
             </a>
           </li>
+
+          @endif
           <li class="nav-item">
-            <a href="{{route('home')}}" class="nav-link">
+            <a href="{{ route('logouts') }}" class="nav-link">
               <i class="nav-icon fas fa-times"></i>
               <p>
                 Salir

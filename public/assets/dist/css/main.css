@@ -1,0 +1,14 @@
+.selecStatusId{
+    background-color: transparent;
+    border: 0ch;
+    font-size: 15pt;  
+    color: aliceblue; 
+}
+
+
+.selecStatusId option{
+    background-color: transparent;
+    
+    font-size: 15pt;  
+    color: black; 
+}

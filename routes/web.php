@@ -5,6 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\MesaController;
+use App\Http\Controllers\GastosController;
+use App\Http\Controllers\MeseroController;
+use App\Http\Controllers\CajaController;
 use App\Http\Controllers\starterPageController;
 /*
 |--------------------------------------------------------------------------
@@ -35,12 +38,33 @@ Route::post('product/category/crear',[ProductController::class, 'addCategory'])-
 Route::post('product/crear',[ProductController::class, 'addProduct'])->name('crear.product');
 Route::post('product/actualizar',[ProductController::class, 'updateProduct'])->name('actualizar.product');
 
-
+// ventanas de  pedidos 
 Route::post('pedido/crear',[PedidoController::class,'create'])->name('crear.pedido');
 Route::post('pedido/pagar',[PedidoController::class,'pagar'])->name('pagar.pedido');
+Route::post('pedido/actualizar',[PedidoController::class,'update'])->name('actualizar.pedido');
+Route::post('pedido/eliminar',[PedidoController::class,'destroy'])->name('eliminar.pedido');
+Route::post('pedido/listo',[PedidoController::class,'store'])->name('listo.pedido');
+
+
+
 
 Route::get('mesas',MesaController::class)->name('mesas');
 Route::post('mesas/crear',[MesaController::class,'create'])->name('mesas.crear');
+
+Route::get('meseros',MeseroController::class)->name('meseros');
+Route::post('meseros/crear',[MeseroController::class,'create'])->name('mesero.crear');
+Route::post('meseros/update',[MeseroController::class,'update'])->name('mesero.actualizar');
+
+
+Route::post('gastos/crear',[GastosController::class,'create'])->name('gastos.crear');
+
+
+Route::post('escuchador',[HomeController::class,'listener'])->name('listenerPedidos');
+
+Route::post('/crear',[CajaController::class,'store'])->name("caja.crear");
+
+Route::get('logouts',[HomeController::class,'logouts'])->name('logouts');
+
 
 Auth::routes();
 
